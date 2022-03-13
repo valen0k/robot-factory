@@ -16,7 +16,6 @@ func Init() *gorm.DB {
 	}
 
 	db.AutoMigrate(models.Robot{})
-	//db.AutoMigrate(models.Warehouse{})
 
 	return db
 }

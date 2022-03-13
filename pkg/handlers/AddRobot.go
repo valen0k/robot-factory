@@ -19,6 +19,7 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 
 	var robot models.Robot
 	json.Unmarshal(body, &robot)
+	robot.Count = 0
 
 	//	Append to the Robot mocks
 	if create := h.DB.Create(&robot); create.Error != nil {
