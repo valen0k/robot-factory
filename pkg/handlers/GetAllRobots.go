@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"robot-factory/pkg/models"
 )
@@ -10,11 +10,11 @@ import (
 func (h handler) GetAllRobots(writer http.ResponseWriter, request *http.Request) {
 	var robots []models.Robot
 	if find := h.DB.Find(&robots); find.Error != nil {
-		fmt.Println(find.Error)
+		log.Fatalln(find.Error)
+		writer.WriteHeader(http.StatusNoContent)
+	} else {
+		writer.Header().Add("Content-Type", "application/json")
+		writer.WriteHeader(http.StatusOK)
+		json.NewEncoder(writer).Encode(robots)
 	}
-
-	writer.Header().Add("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode(robots)
-
 }

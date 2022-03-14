@@ -8,4 +8,5 @@ type Robot struct {
 	StorageCost       int    `json:"storage_cost"`       // coins per unit per day
 	SellingPrice      int    `json:"selling_price"`      // coins per unit
 	ManufacturingRate int    `json:"manufacturing_rate"` // units per day
+	Allowance         int
 }
