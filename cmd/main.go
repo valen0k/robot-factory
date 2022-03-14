@@ -22,6 +22,8 @@ func main() {
 		router.HandleFunc("/robots/{id}", h.UpdateRobot).Methods(http.MethodPut)
 		router.HandleFunc("/robots/{id}", h.DeleteRobot).Methods(http.MethodDelete)
 		router.HandleFunc("/robots/{id}/sell_robots", h.SellRobots).Methods(http.MethodPut)
+		router.HandleFunc("/profit/{year}/{month}", h.GetProfit).Methods(http.MethodGet)
+		//router.HandleFunc("/future_profit", h.GetFutureProfit).Methods(http.MethodGet)
 
 		log.Println("API is Running")
 		err := http.ListenAndServe(":8081", router)
