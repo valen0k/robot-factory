@@ -17,18 +17,18 @@ func (h handler) DeleteRobot(writer http.ResponseWriter, request *http.Request) 
 	if err1 != nil {
 		log.Fatalln(err1)
 		writer.WriteHeader(http.StatusBadRequest)
-	} else {
-		// Find the robot by Id
-		var robot models.Robot
-		if first := h.DB.First(&robot, id); first.Error != nil {
-			fmt.Println(first.Error)
-			writer.WriteHeader(http.StatusNoContent)
-		} else {
-			// Delete that robot
-			h.DB.Delete(&robot)
-
-			writer.WriteHeader(http.StatusOK)
-			json.NewEncoder(writer).Encode("Deleted")
-		}
+		return
 	}
+	// Find the robot by Id
+	var robot models.Robot
+	if first := h.DB.First(&robot, id); first.Error != nil {
+		fmt.Println(first.Error)
+		writer.WriteHeader(http.StatusNoContent)
+		return
+	}
+	// Delete that robot
+	h.DB.Delete(&robot)
+
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode("Deleted")
 }

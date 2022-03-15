@@ -17,16 +17,16 @@ func (h handler) GetRobot(writer http.ResponseWriter, request *http.Request) {
 	if err1 != nil {
 		log.Fatalln(err1)
 		writer.WriteHeader(http.StatusBadRequest)
-	} else {
-		// Find the robot by Id
-		var robot models.Robot
-		if first := h.DB.First(&robot, id); first.Error != nil {
-			fmt.Println(first.Error)
-			writer.WriteHeader(http.StatusNoContent)
-		} else {
-			writer.WriteHeader(http.StatusOK)
-			writer.Header().Add("Content-Type", "application/json")
-			json.NewEncoder(writer).Encode(robot)
-		}
+		return
 	}
+	// Find the robot by Id
+	var robot models.Robot
+	if first := h.DB.First(&robot, id); first.Error != nil {
+		fmt.Println(first.Error)
+		writer.WriteHeader(http.StatusNoContent)
+		return
+	}
+	writer.WriteHeader(http.StatusOK)
+	writer.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode(robot)
 }

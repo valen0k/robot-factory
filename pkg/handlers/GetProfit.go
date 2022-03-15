@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"robot-factory/pkg/models"
@@ -11,26 +11,33 @@ import (
 )
 
 func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
-	vars := mux.Vars(request)
-	year, err1 := strconv.Atoi(vars["year"])
-	month, err2 := strconv.Atoi(vars["month"])
-	if err1 != nil || err2 != nil {
-		log.Fatalln(err1, err2)
+	defer request.Body.Close()
+	body, err1 := ioutil.ReadAll(request.Body)
+	if err1 != nil {
+		log.Fatalln(err1)
 		writer.WriteHeader(http.StatusBadRequest)
-	} else {
-		var sales []models.Sale
-		if find := h.DB.Find(&sales,
-			"sell_time BETWEEN ? AND ?",
-			strconv.Itoa(year)+"-"+strconv.Itoa(month)+"-14 00:00:00.000000 +00:00",
-			time.Now()); find.Error != nil {
-			writer.WriteHeader(http.StatusBadRequest)
-		} else {
-			var profit int
-			for i := 0; i < len(sales); i++ {
-				profit += sales[i].Profit
-			}
-			writer.Header().Add("Content-Type", "application/json")
-			json.NewEncoder(writer).Encode("The profit is " + strconv.Itoa(profit))
-		}
+		return
 	}
+	var profitBody models.ProfitRequest
+	if err2 := json.Unmarshal(body, &profitBody); err2 != nil {
+		log.Fatalln(err2)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	startTime := time.Date(profitBody.Year,
+		time.Month(profitBody.Month),
+		profitBody.Day,
+		0, 0, 0, 0, time.Local)
+	var finishTime time.Time
+	if profitBody.AmountDays < 1 {
+		finishTime = time.Now()
+	} else {
+		finishTime = startTime.Add(time.Hour*24*time.Duration(profitBody.AmountDays+1) - time.Second)
+	}
+	var profit int
+	h.DB.Table("sales").Select("SUM(profit)").
+		Where("sell_time BETWEEN ? AND ?",
+			startTime, finishTime).Row().Scan(&profit)
+	writer.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode("The profit is " + strconv.Itoa(profit))
 }

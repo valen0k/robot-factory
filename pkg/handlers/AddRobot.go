@@ -15,24 +15,24 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 	if err1 != nil {
 		log.Fatalln(err1)
 		writer.WriteHeader(http.StatusBadRequest)
-	} else {
-		var robot models.Robot
-		if err2 := json.Unmarshal(body, &robot); err2 != nil {
-			log.Fatalln(err2)
-			writer.WriteHeader(http.StatusBadRequest)
-		} else {
-			robot.Count = 0
-
-			//	Append to the Robot mocks
-			if create := h.DB.Create(&robot); create.Error != nil {
-				log.Fatalln(create.Error)
-				writer.WriteHeader(http.StatusNotModified)
-			} else {
-				//	Send a 201 created response
-				writer.WriteHeader(http.StatusCreated)
-				writer.Header().Add("Content-Type", "application/json")
-				json.NewEncoder(writer).Encode("Created")
-			}
-		}
+		return
 	}
+	var robot models.Robot
+	if err2 := json.Unmarshal(body, &robot); err2 != nil {
+		log.Fatalln(err2)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	robot.Count = 0
+
+	//	Append to the Robot mocks
+	if create := h.DB.Create(&robot); create.Error != nil {
+		log.Fatalln(create.Error)
+		writer.WriteHeader(http.StatusNotModified)
+		return
+	}
+	//	Send a 201 created response
+	writer.WriteHeader(http.StatusCreated)
+	writer.Header().Add("Content-Type", "application/json")
+	json.NewEncoder(writer).Encode("Created")
 }

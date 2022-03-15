@@ -15,20 +15,22 @@ func (h handler) Trigger() {
 			//Prints UTC time and date
 			log.Println(tick)
 			var robots []models.Robot
-			if find := h.DB.Find(&robots); find.Error != nil {
+			find := h.DB.Find(&robots)
+			if find.Error != nil {
 				log.Println(find.Error)
-			} else {
-				for i := 0; i < len(robots); i++ {
-					if robots[i].Count > 0 {
-						robots[i].Allowance += robots[i].StorageCost
-					} else {
-						robots[i].Allowance = 0
-					}
-					robots[i].Count += robots[i].ManufacturingRate
+				continue
+			}
+			for i := 0; i < len(robots); i++ {
+				if robots[i].Count > 0 {
+					robots[i].Allowance += robots[i].StorageCost
+				} else {
+					robots[i].Allowance = 0
 				}
-				if save := h.DB.Save(&robots); save.Error != nil {
-					log.Println(find.Error)
-				}
+				robots[i].Count += robots[i].ManufacturingRate
+			}
+			if save := h.DB.Save(&robots); save.Error != nil {
+				log.Println(find.Error)
+				continue
 			}
 		}
 	}
