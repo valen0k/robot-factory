@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Robot struct {
 	Id                int    `json:"id" gorm:"primaryKey"`
 	Type              string `json:"type"`
@@ -9,4 +11,5 @@ type Robot struct {
 	SellingPrice      int    `json:"selling_price"`      // coins per unit
 	ManufacturingRate int    `json:"manufacturing_rate"` // units per day
 	Allowance         int
+	LastUpdate        time.Time
 }

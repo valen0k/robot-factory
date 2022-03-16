@@ -14,8 +14,6 @@ func main() {
 		h := handlers.New(DB)
 		router := mux.NewRouter()
 
-		go h.Trigger()
-
 		router.HandleFunc("/robots", h.GetAllRobots).Methods(http.MethodGet)
 		router.HandleFunc("/robots", h.AddRobot).Methods(http.MethodPost)
 		router.HandleFunc("/robots/{id}", h.GetRobot).Methods(http.MethodGet)
