@@ -1,5 +1,7 @@
 # robot-factory
 
+### Task
+
 You own a robot factory producing vacuum cleaner and window cleaner robots. Produced robots are stored at your warehouse (which for simplicity has unlimited storage space) and then sold.
 
 New robots are shipped to the warehouse at the end of the day they were produced and are removed from warehouse immediately after purchase.
@@ -13,3 +15,8 @@ Design and develop a solution which allows to:
     Get the profit for arbitrary past period
     Sell robots to customers
     Get the projected profit for arbitrary future period based on selling statistics (advanced)
+
+### Update Info
+
+To add a produced unit of robots per day, you need to add the `updateInfo` executable to the cron.
+You can get the executable file using the `go build cmd/updateInfo.go` command.
