@@ -17,7 +17,7 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	id, err1 := strconv.Atoi(vars["id"])
 	if err1 != nil {
-		log.Fatalln(err1)
+		log.Println(err1)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -25,7 +25,7 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	defer request.Body.Close()
 	body, err2 := ioutil.ReadAll(request.Body)
 	if err2 != nil {
-		log.Fatalln(err2)
+		log.Println(err2)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -38,7 +38,7 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	}
 	var updateRobot models.Robot
 	if err3 := json.Unmarshal(body, &updateRobot); err3 != nil {
-		log.Fatalln(err3)
+		log.Println(err3)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -57,17 +57,16 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	sale.WarehouseStorageCost = robot.WarehouseStorageCost
 	sale.SellingPrice = robot.SellingPrice
 	sale.SellTime = time.Now()
-	//sale.Profit = (robot.SellingPrice - robot.ManufacturingCost - robot.WarehouseStorageCost) * updateRobot.Count
 
 	save1 := h.DB.Save(&robot)
 	if save1.Error != nil {
-		log.Fatalln(save1)
+		log.Println(save1)
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}
 	save2 := h.DB.Save(&sale)
 	if save2.Error != nil {
-		log.Fatalln(save2)
+		log.Println(save2)
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}

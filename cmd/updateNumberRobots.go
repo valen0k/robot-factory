@@ -20,13 +20,14 @@ func main() {
 		log.Fatalln(find.Error)
 	}
 	if len(robots) > 0 {
-		now := time.Now()
-		for i := 0; i < len(robots); i++ {
-			robots[i].Count += robots[i].ManufacturingRate
-			robots[i].LastUpdateNumberRobots = now
-		}
-		if save := h.DB.Save(&robots); save.Error != nil {
-			log.Fatalln(find.Error)
-		}
+		log.Println("no robots")
+	}
+	now := time.Now()
+	for i := 0; i < len(robots); i++ {
+		robots[i].Count += robots[i].ManufacturingRate
+		robots[i].LastUpdateNumberRobots = now
+	}
+	if save := h.DB.Save(&robots); save.Error != nil {
+		log.Fatalln(find.Error)
 	}
 }

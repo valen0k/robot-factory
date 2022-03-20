@@ -10,7 +10,7 @@ import (
 func (h handler) GetAllRobots(writer http.ResponseWriter, request *http.Request) {
 	var robots []models.Robot
 	if find := h.DB.Find(&robots); find.Error != nil {
-		log.Fatalln(find.Error)
+		log.Println(find.Error)
 		writer.WriteHeader(http.StatusNoContent)
 		return
 	}

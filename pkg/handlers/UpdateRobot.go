@@ -17,7 +17,7 @@ func (h handler) UpdateRobot(writer http.ResponseWriter, request *http.Request) 
 	vars := mux.Vars(request)
 	id, err1 := strconv.Atoi(vars["id"])
 	if err1 != nil {
-		log.Fatalln(err1)
+		log.Println(err1)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -39,7 +39,7 @@ func (h handler) UpdateRobot(writer http.ResponseWriter, request *http.Request) 
 	var updateRobot models.Robot
 	err3 := json.Unmarshal(body, &updateRobot)
 	if err3 != nil {
-		log.Fatalln(err3)
+		log.Println(err3)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -50,7 +50,7 @@ func (h handler) UpdateRobot(writer http.ResponseWriter, request *http.Request) 
 	robot.ManufacturingRate = updateRobot.ManufacturingRate
 
 	if save := h.DB.Save(&robot); save.Error != nil {
-		log.Fatalln(save.Error)
+		log.Println(save.Error)
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}

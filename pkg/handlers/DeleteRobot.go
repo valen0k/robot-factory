@@ -15,7 +15,7 @@ func (h handler) DeleteRobot(writer http.ResponseWriter, request *http.Request) 
 	vars := mux.Vars(request)
 	id, err1 := strconv.Atoi(vars["id"])
 	if err1 != nil {
-		log.Fatalln(err1)
+		log.Println(err1)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}

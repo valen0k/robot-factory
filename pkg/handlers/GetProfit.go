@@ -14,13 +14,13 @@ func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
 	defer request.Body.Close()
 	body, err1 := ioutil.ReadAll(request.Body)
 	if err1 != nil {
-		log.Fatalln(err1)
+		log.Println(err1)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	var profitBody models.ProfitRequest
 	if err2 := json.Unmarshal(body, &profitBody); err2 != nil {
-		log.Fatalln(err2)
+		log.Println(err2)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}

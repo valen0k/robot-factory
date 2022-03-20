@@ -14,13 +14,13 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 	defer request.Body.Close()
 	body, err1 := ioutil.ReadAll(request.Body)
 	if err1 != nil {
-		log.Fatalln(err1)
+		log.Println(err1)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	var robot models.Robot
 	if err2 := json.Unmarshal(body, &robot); err2 != nil {
-		log.Fatalln(err2)
+		log.Println(err2)
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -30,7 +30,7 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 
 	//	Append to the Robot mocks
 	if create := h.DB.Create(&robot); create.Error != nil {
-		log.Fatalln(create.Error)
+		log.Println(create.Error)
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}
