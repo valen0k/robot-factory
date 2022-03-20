@@ -32,10 +32,10 @@ func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
 	if profitBody.AmountDays < 1 {
 		finishTime = time.Now()
 	} else {
-		finishTime = startTime.Add(time.Hour*24*time.Duration(profitBody.AmountDays+1) - time.Second)
+		finishTime = startTime.Add(time.Hour*24*time.Duration(profitBody.AmountDays) - time.Second)
 	}
 	var profit int
-	h.DB.Table("sales").Select("SUM(profit)").
+	h.DB.Table("sales").Select("SUM((selling_price - manufacturing_cost - warehouse_storage_cost) * count_robots)").
 		Where("sell_time BETWEEN ? AND ?",
 			startTime, finishTime).Row().Scan(&profit)
 	writer.Header().Add("Content-Type", "application/json")

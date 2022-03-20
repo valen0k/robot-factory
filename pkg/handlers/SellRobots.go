@@ -51,10 +51,13 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	var sale models.Sale
 
 	robot.Count -= updateRobot.Count
-	sale.CountRobots = updateRobot.Count
-	sale.SellTime = time.Now()
 	sale.RobotId = robot.Id
-	sale.Profit = (robot.SellingPrice - robot.ManufacturingCost - robot.Allowance) * updateRobot.Count
+	sale.CountRobots = updateRobot.Count
+	sale.ManufacturingCost = robot.ManufacturingCost
+	sale.WarehouseStorageCost = robot.WarehouseStorageCost
+	sale.SellingPrice = robot.SellingPrice
+	sale.SellTime = time.Now()
+	//sale.Profit = (robot.SellingPrice - robot.ManufacturingCost - robot.WarehouseStorageCost) * updateRobot.Count
 
 	save1 := h.DB.Save(&robot)
 	if save1.Error != nil {
