@@ -19,15 +19,12 @@ func (h handler) DeleteRobot(writer http.ResponseWriter, request *http.Request) 
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	// Find the robot by Id
-	var robot models.Robot
-	if first := h.DB.First(&robot, id); first.Error != nil {
-		fmt.Println(first.Error)
-		writer.WriteHeader(http.StatusNoContent)
+	// Delete that robot
+	if tx := h.DB.Delete(models.Robot{}, id); tx.Error != nil {
+		fmt.Println(tx.Error)
+		writer.WriteHeader(http.StatusNotFound)
 		return
 	}
-	// Delete that robot
-	h.DB.Delete(&robot)
 
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode("Deleted")

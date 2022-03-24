@@ -23,7 +23,7 @@ func (h handler) GetRobot(writer http.ResponseWriter, request *http.Request) {
 	var robot models.Robot
 	if first := h.DB.First(&robot, id); first.Error != nil {
 		fmt.Println(first.Error)
-		writer.WriteHeader(http.StatusNoContent)
+		writer.WriteHeader(http.StatusNotFound)
 		return
 	}
 	writer.WriteHeader(http.StatusOK)

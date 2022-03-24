@@ -33,7 +33,7 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	var robot models.Robot
 	if first := h.DB.First(&robot, id); first.Error != nil {
 		fmt.Println(first.Error)
-		writer.WriteHeader(http.StatusNoContent)
+		writer.WriteHeader(http.StatusNotFound)
 		return
 	}
 	var updateRobot models.Robot
@@ -48,15 +48,16 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(writer).Encode("There are fewer of them than you want")
 		return
 	}
+
 	var sale models.Sale
+	now := time.Now()
 
 	robot.Count -= updateRobot.Count
 	sale.RobotId = robot.Id
 	sale.CountRobots = updateRobot.Count
 	sale.ManufacturingCost = robot.ManufacturingCost
-	sale.WarehouseStorageCost = robot.WarehouseStorageCost
 	sale.SellingPrice = robot.SellingPrice
-	sale.SellTime = time.Now()
+	sale.SellTime = now
 
 	save1 := h.DB.Save(&robot)
 	if save1.Error != nil {
@@ -70,6 +71,24 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}
+
+	var saleRobots []models.RobotsWarehouse
+	find := h.DB.Where("sale_id = 0 AND robot_id = ?", robot.Id).Order("id asc").Limit(updateRobot.Count).Find(&saleRobots)
+	if find.Error != nil {
+		log.Println(find.Error)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	for i := 0; i < len(saleRobots); i++ {
+		saleRobots[i].SaleId = sale.Id
+		saleRobots[i].LastUpdateStorageCost = now
+	}
+	if save3 := h.DB.Save(&saleRobots); save3.Error != nil {
+		log.Println(save3)
+		writer.WriteHeader(http.StatusNotModified)
+		return
+	}
+
 	writer.WriteHeader(http.StatusOK)
 	writer.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode("Sold")

@@ -9,9 +9,9 @@ import (
 
 func (h handler) GetAllRobots(writer http.ResponseWriter, request *http.Request) {
 	var robots []models.Robot
-	if find := h.DB.Find(&robots); find.Error != nil {
+	if find := h.DB.Order("id asc").Find(&robots); find.Error != nil {
 		log.Println(find.Error)
-		writer.WriteHeader(http.StatusNoContent)
+		writer.WriteHeader(http.StatusNotFound)
 		return
 	}
 	writer.Header().Add("Content-Type", "application/json")

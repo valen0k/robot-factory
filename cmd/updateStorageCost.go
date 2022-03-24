@@ -14,23 +14,21 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 	h := handlers.New(DB)
-	var robots []models.Robot
-	find := h.DB.Where("last_update_storage_cost < CURRENT_DATE").Find(&robots)
+	var updateInfo []models.RobotsWarehouse
+	find := h.DB.Where("last_update_storage_cost < CURRENT_DATE AND sale_id > 0").Find(&updateInfo)
 	if find.Error != nil {
 		log.Fatalln(find.Error)
 	}
-	if len(robots) > 0 {
-		now := time.Now()
-		for i := 0; i < len(robots); i++ {
-			if robots[i].Count != 0 {
-				robots[i].WarehouseStorageCost += robots[i].StorageCost
-			} else {
-				robots[i].WarehouseStorageCost = 0
-			}
-			robots[i].LastUpdateStorageCost = now
-		}
-		if save := h.DB.Save(&robots); save.Error != nil {
-			log.Fatalln(find.Error)
-		}
+	if len(updateInfo) < 1 {
+		log.Fatalln("all update")
+	}
+	now := time.Now()
+	for i := 0; i < len(updateInfo); i++ {
+		updateInfo[i].Days++
+		updateInfo[i].WarehouseStorageCost += updateInfo[i].StorageCost
+		updateInfo[i].LastUpdateStorageCost = now
+	}
+	if save := h.DB.Save(&updateInfo); save.Error != nil {
+		log.Fatalln(find.Error)
 	}
 }

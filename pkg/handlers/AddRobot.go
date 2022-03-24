@@ -26,7 +26,6 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 	}
 	robot.Count = 0
 	robot.LastUpdateNumberRobots = time.Now()
-	robot.LastUpdateStorageCost = time.Now()
 
 	//	Append to the Robot mocks
 	if create := h.DB.Create(&robot); create.Error != nil {

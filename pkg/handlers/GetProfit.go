@@ -34,10 +34,15 @@ func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		finishTime = startTime.Add(time.Hour*24*time.Duration(profitBody.AmountDays) - time.Second)
 	}
-	var profit int
-	h.DB.Table("sales").Select("SUM((selling_price - manufacturing_cost - warehouse_storage_cost) * count_robots)").
+	var profit1 int
+	h.DB.Table("sales").Select("SUM((selling_price - manufacturing_cost) * count_robots)").
 		Where("sell_time BETWEEN ? AND ?",
-			startTime, finishTime).Row().Scan(&profit)
+			startTime, finishTime).Row().Scan(&profit1)
+	var profit2 int
+	h.DB.Table("robots_warehouses").
+		Select("SUM(warehouse_storage_cost)").
+		Where("sale_id = 0 AND sell_time BETWEEN ? AND ?",
+			startTime, finishTime).Row().Scan(&profit2)
 	writer.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode("The profit is " + strconv.Itoa(profit))
+	json.NewEncoder(writer).Encode("The profit is " + strconv.Itoa(profit1-profit2))
 }
