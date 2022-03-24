@@ -41,7 +41,7 @@ func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
 	var profit2 int
 	h.DB.Table("robots_warehouses").
 		Select("SUM(warehouse_storage_cost)").
-		Where("sale_id = 0 AND sell_time BETWEEN ? AND ?",
+		Where("sale_id > 0 AND last_update_storage_cost BETWEEN ? AND ?",
 			startTime, finishTime).Row().Scan(&profit2)
 	writer.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode("The profit is " + strconv.Itoa(profit1-profit2))
