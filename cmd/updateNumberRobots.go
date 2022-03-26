@@ -23,23 +23,11 @@ func main() {
 		log.Fatalln("no robots")
 	}
 	now := time.Now()
-	var newRobots []models.RobotsWarehouse
 	for i := 0; i < len(robots); i++ {
 		robots[i].Count += robots[i].ManufacturingRate
 		robots[i].LastUpdateNumberRobots = now
-		for k := 0; k < robots[i].ManufacturingRate; k++ {
-			newRobots = append(newRobots, models.RobotsWarehouse{
-				RobotId:               robots[i].Id,
-				Days:                  1,
-				StorageCost:           robots[i].StorageCost,
-				WarehouseStorageCost:  robots[i].StorageCost,
-				LastUpdateStorageCost: now})
-		}
 	}
 	if save := h.DB.Save(&robots); save.Error != nil {
-		log.Fatalln(find.Error)
-	}
-	if save := h.DB.Save(&newRobots); save.Error != nil {
 		log.Fatalln(find.Error)
 	}
 }

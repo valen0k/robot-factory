@@ -35,7 +35,7 @@ func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
 		finishTime = startTime.Add(time.Hour*24*time.Duration(profitBody.AmountDays) - time.Second)
 	}
 	var profit1 int
-	h.DB.Table("sales").Select("SUM((selling_price - manufacturing_cost) * count_robots)").
+	h.DB.Table("sales").Select("SUM((sell_price - cost) * count_robots)").
 		Where("sell_time BETWEEN ? AND ?",
 			startTime, finishTime).Row().Scan(&profit1)
 	var profit2 int

@@ -11,4 +11,5 @@ type Robot struct {
 	SellingPrice           int       `json:"selling_price"`      // coins per unit
 	ManufacturingRate      int       `json:"manufacturing_rate"` // units per day
 	LastUpdateNumberRobots time.Time `json:"-"`
+	LastUpdateStorageCost  time.Time `json:"-"`
 }

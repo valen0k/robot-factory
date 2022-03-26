@@ -14,21 +14,36 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 	h := handlers.New(DB)
-	var updateInfo []models.RobotsWarehouse
-	find := h.DB.Where("last_update_storage_cost < CURRENT_DATE AND sale_id > 0").Find(&updateInfo)
+
+	var robots []models.Robot
+	find := h.DB.Where("last_update_number_robots < CURRENT_DATE").Find(&robots)
 	if find.Error != nil {
 		log.Fatalln(find.Error)
 	}
-	if len(updateInfo) < 1 {
-		log.Fatalln("all update")
+	if len(robots) < 1 {
+		log.Fatalln("no robots")
 	}
+
+	var sale []models.Sale
 	now := time.Now()
-	for i := 0; i < len(updateInfo); i++ {
-		updateInfo[i].Days++
-		updateInfo[i].WarehouseStorageCost += updateInfo[i].StorageCost
-		updateInfo[i].LastUpdateStorageCost = now
+
+	for i := 0; i < len(robots); i++ {
+		sale = append(sale, models.Sale{
+			Transaction: "STORAGE",
+			RobotId:     robots[i].Id,
+			CountRobots: robots[i].Count,
+			Cost:        robots[i].StorageCost,
+			SellPrice:   0,
+			SellTime:    now,
+		})
+		robots[i].LastUpdateStorageCost = now
 	}
-	if save := h.DB.Save(&updateInfo); save.Error != nil {
-		log.Fatalln(find.Error)
+
+	if save1 := h.DB.Save(&robots); save1.Error != nil {
+		log.Fatalln(save1.Error)
+	}
+
+	if save2 := h.DB.Save(&sale); save2.Error != nil {
+		log.Fatalln(save2.Error)
 	}
 }

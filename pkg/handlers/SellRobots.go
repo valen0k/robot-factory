@@ -53,10 +53,11 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	now := time.Now()
 
 	robot.Count -= updateRobot.Count
+	sale.Transaction = "SALE"
 	sale.RobotId = robot.Id
 	sale.CountRobots = updateRobot.Count
-	sale.ManufacturingCost = robot.ManufacturingCost
-	sale.SellingPrice = robot.SellingPrice
+	sale.Cost = robot.ManufacturingCost * updateRobot.Count
+	sale.SellPrice = robot.SellingPrice * updateRobot.Count
 	sale.SellTime = now
 
 	save1 := h.DB.Save(&robot)
@@ -68,23 +69,6 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 	save2 := h.DB.Save(&sale)
 	if save2.Error != nil {
 		log.Println(save2)
-		writer.WriteHeader(http.StatusNotModified)
-		return
-	}
-
-	var saleRobots []models.RobotsWarehouse
-	find := h.DB.Where("sale_id = 0 AND robot_id = ?", robot.Id).Order("id asc").Limit(updateRobot.Count).Find(&saleRobots)
-	if find.Error != nil {
-		log.Println(find.Error)
-		writer.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	for i := 0; i < len(saleRobots); i++ {
-		saleRobots[i].SaleId = sale.Id
-		saleRobots[i].LastUpdateStorageCost = now
-	}
-	if save3 := h.DB.Save(&saleRobots); save3.Error != nil {
-		log.Println(save3)
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}
