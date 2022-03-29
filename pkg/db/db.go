@@ -17,7 +17,7 @@ func Init() (*gorm.DB, error) {
 	if err := db.AutoMigrate(models.Robot{}); err != nil {
 		return nil, errors.New(err.Error())
 	}
-	if err := db.AutoMigrate(models.Sale{}); err != nil {
+	if err := db.AutoMigrate(models.TransactionHistory{}); err != nil {
 		return nil, errors.New(err.Error())
 	}
 

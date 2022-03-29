@@ -49,16 +49,16 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	var sale models.Sale
+	var history models.TransactionHistory
 	now := time.Now()
 
 	robot.Count -= updateRobot.Count
-	sale.Transaction = "SALE"
-	sale.RobotId = robot.Id
-	sale.CountRobots = updateRobot.Count
-	sale.Cost = robot.ManufacturingCost * updateRobot.Count
-	sale.SellPrice = robot.SellingPrice * updateRobot.Count
-	sale.SellTime = now
+	history.Transaction = models.SALE
+	history.RobotId = robot.Id
+	history.CountRobots = updateRobot.Count
+	history.Amount = robot.SellingPrice
+	history.ManufacturingCost = robot.ManufacturingCost
+	history.Time = now
 
 	save1 := h.DB.Save(&robot)
 	if save1.Error != nil {
@@ -66,7 +66,7 @@ func (h handler) SellRobots(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusNotModified)
 		return
 	}
-	save2 := h.DB.Save(&sale)
+	save2 := h.DB.Save(&history)
 	if save2.Error != nil {
 		log.Println(save2)
 		writer.WriteHeader(http.StatusNotModified)

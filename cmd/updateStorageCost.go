@@ -16,7 +16,7 @@ func main() {
 	h := handlers.New(DB)
 
 	var robots []models.Robot
-	find := h.DB.Where("last_update_number_robots < CURRENT_DATE").Find(&robots)
+	find := h.DB.Where("last_update_storage_cost < CURRENT_DATE").Find(&robots)
 	if find.Error != nil {
 		log.Fatalln(find.Error)
 	}
@@ -24,17 +24,17 @@ func main() {
 		log.Fatalln("no robots")
 	}
 
-	var sale []models.Sale
+	var sale []models.TransactionHistory
 	now := time.Now()
 
 	for i := 0; i < len(robots); i++ {
-		sale = append(sale, models.Sale{
-			Transaction: "STORAGE",
-			RobotId:     robots[i].Id,
-			CountRobots: robots[i].Count,
-			Cost:        robots[i].StorageCost,
-			SellPrice:   0,
-			SellTime:    now,
+		sale = append(sale, models.TransactionHistory{
+			Transaction:       models.STORAGE,
+			RobotId:           robots[i].Id,
+			CountRobots:       robots[i].Count,
+			Amount:            robots[i].StorageCost,
+			ManufacturingCost: 0,
+			Time:              now,
 		})
 		robots[i].LastUpdateStorageCost = now
 	}
