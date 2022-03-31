@@ -24,7 +24,18 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	robot.Count = 0
+
+	if len(robot.Type) < 3 ||
+		robot.CountOfRobots < 0 ||
+		robot.ManufacturingCost < 0 ||
+		robot.ManufacturingRate < 0 ||
+		robot.SellingPrice < 0 ||
+		robot.StorageCost < 0 {
+		log.Println("Bad Request")
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	robot.LastUpdateNumberRobots = time.Now().Add(time.Hour * -24)
 	robot.LastUpdateStorageCost = time.Now().Add(time.Hour * -24)
 

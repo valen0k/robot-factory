@@ -11,7 +11,7 @@ const (
 
 type TransactionHistory struct {
 	Id                int         `gorm:"primaryKey"`
-	Transaction       transaction `gorm:"type:varchar"`
+	Transaction       transaction `gorm:"type:transaction"`
 	RobotId           int
 	CountRobots       int
 	Amount            int
