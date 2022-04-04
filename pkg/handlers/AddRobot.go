@@ -48,5 +48,5 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 	//	Send a 201 created response
 	writer.WriteHeader(http.StatusCreated)
 	writer.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode("Created")
+	json.NewEncoder(writer).Encode(map[string]string{"status": "Created"})
 }

@@ -28,22 +28,38 @@ func (h handler) GetProfit(writer http.ResponseWriter, request *http.Request) {
 		time.Month(profitBody.Month),
 		profitBody.Day,
 		0, 0, 0, 0, time.Local)
+
 	var finishTime time.Time
 	if profitBody.AmountDays < 1 {
 		finishTime = time.Now()
 	} else {
 		finishTime = startTime.Add(time.Hour*24*time.Duration(profitBody.AmountDays) - time.Second)
 	}
-	var profit1 int
-	h.DB.Table("transaction_histories").Select("SUM((amount - manufacturing_cost) * count_robots)").
-		Where("transaction = ? AND time BETWEEN ? AND ?",
-			models.SALE, startTime, finishTime).Row().Scan(&profit1)
 
-	var profit2 int
-	h.DB.Table("transaction_histories").Select("SUM((amount - manufacturing_cost) * count_robots)").
+	var profit int
+	err3 := h.DB.Table("transaction_histories").Select("SUM((amount - manufacturing_cost) * count_robots)").
 		Where("transaction = ? AND time BETWEEN ? AND ?",
-			models.STORAGE, startTime, finishTime).Row().Scan(&profit2)
+			models.SALE, startTime, finishTime).Row().Scan(&profit)
+	if err3 != nil {
+		log.Println(err3)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
+	var expenses int
+	err4 := h.DB.Table("transaction_histories").Select("SUM((amount - manufacturing_cost) * count_robots)").
+		Where("transaction = ? AND time BETWEEN ? AND ?",
+			models.STORAGE, startTime, finishTime).Row().Scan(&expenses)
+	if err4 != nil {
+		log.Println(err4)
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	res := map[string]string{
+		"status": "success",
+		"profit": strconv.Itoa(profit - expenses),
+	}
 	writer.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode("The profit is " + strconv.Itoa(profit1-profit2))
+	json.NewEncoder(writer).Encode(res)
 }

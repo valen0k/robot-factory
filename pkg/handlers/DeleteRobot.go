@@ -27,5 +27,5 @@ func (h handler) DeleteRobot(writer http.ResponseWriter, request *http.Request) 
 	}
 
 	writer.WriteHeader(http.StatusOK)
-	json.NewEncoder(writer).Encode("Deleted")
+	json.NewEncoder(writer).Encode(map[string]string{"status": "Deleted"})
 }

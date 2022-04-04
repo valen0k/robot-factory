@@ -16,7 +16,9 @@ Design and develop a solution which allows to:
     Sell robots to customers
     Get the projected profit for arbitrary future period based on selling statistics (advanced)
 
-### Update Info
+### Использование
 
-To add a produced unit of robots per day, you need to add the `updateInfo` executable to the cron.
-You can get the executable file using the `go build cmd/updateInfo.go` command.
+Перед запуском сервиса, необходимо, добавить тип в базу данных с помощью команды `create type transaction as enum ('STORAGE', 'SALE');`
+
+Для запуска сервиса и компиляции бинарных файлов необходимо прописать в консоли `make`. Сервис запущен, останется добавить бинарные файлы в планировщик Cron. Запись может выглядеть следующим образом `0 0 * * * path-to-bin/updateStorageCost` и `0 0 * * * path-to-bin/updateNumberRobots`.
+    
