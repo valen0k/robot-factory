@@ -36,8 +36,8 @@ func (h handler) AddRobot(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	robot.LastUpdateNumberRobots = time.Now().Add(time.Hour * -24)
-	robot.LastUpdateStorageCost = time.Now().Add(time.Hour * -24)
+	robot.LastUpdateNumberRobots = time.Now().Add(time.Hour * -24) // the time of the last update (minus a day for regular tasks)
+	robot.LastUpdateStorageCost = time.Now().Add(time.Hour * -24)  // the time of the last update (minus a day for regular tasks)
 
 	//	Append to the Robot mocks
 	if create := h.DB.Create(&robot); create.Error != nil {

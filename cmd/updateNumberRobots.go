@@ -6,11 +6,17 @@ import (
 	"robot-factory/pkg/db"
 	"robot-factory/pkg/handlers"
 	"robot-factory/pkg/models"
+	"robot-factory/pkg/util"
 	"time"
 )
 
 func main() {
-	DB, err := db.Init()
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatalln("cannot load config: ", err)
+	}
+
+	DB, err := db.Init(config)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
