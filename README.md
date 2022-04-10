@@ -33,12 +33,22 @@ $ make
 Add regular tasks into crontab:
 
 ```crontab
-0 0 * * * /project-dir/cmd/updateStorageCost
-0 0 * * * /project-dir/cmd/updateNumberRobots
+0 0 * * * /project-dir/updateStorageCost
+0 0 * * * /project-dir/updateNumberRobots
 ```
 
 Start service:
 
 ```shell
-$ make start
+$ make server
 ```
+
+API:
+
+1. Get all robots `GET /robots`
+2. Create robot `POST /robots`
+3. Update robot `PUT /robots/{robotId}`
+4. Delete robot `DELETE /robots/{robotId}`
+5. Get robot `GET /robots/{robotId}`
+6. Sell robots `PUT /robots/{robotId}/sell_robots`
+7. Get profit `GET /profit`
