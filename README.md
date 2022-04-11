@@ -18,6 +18,12 @@ Design and develop a solution which allows to:
 
 ## Installation
 
+Installing:
+
+```shell
+$ git clone https://github.com/valen0k/robot-factory.git
+```
+
 Initialize database:
 
 ```shell
